@@ -52,7 +52,7 @@ public class DirectedEdge {
     public double weight() {
         return weight;
     }
-
+    
     /**
      * Returns a string representation of the directed edge.
      * @return a string representation of the directed edge

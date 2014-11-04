@@ -13,6 +13,7 @@
  * 
  */
 
+import java.util.Iterator;
 import java.util.Vector;
 import java.util.Locale;
 import java.util.Scanner;
@@ -122,6 +123,20 @@ public class WeightedGraph {
 		return this.E;
 	}
 	
+	/**
+	 * return adjacent edges of a given vertex
+	 * @param v
+	 * @return iterator of edges
+	 */
+	public Iterator<DirectedEdge> adjEdges(int v){
+		if(v<0||v>=this.V)throw new IllegalArgumentException("Exceed Bound!");
+    	return this.adjLists[v].iterator();
+    }
+	
+	public Point getPoint(int v){
+		if(v<0||v>=this.V)throw new IllegalArgumentException("Exceed Bound!");
+		return vList[v];
+	}
 	/**
 	 * Draw points and lines to represent graph
 	 */

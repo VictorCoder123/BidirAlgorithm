@@ -1,5 +1,6 @@
 /**
- * 
+ * Point class with x-y coordinates and 
+ * a universal identifier num
  */
 
 /**
