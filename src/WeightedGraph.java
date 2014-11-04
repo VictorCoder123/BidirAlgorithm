@@ -103,6 +103,31 @@ public class WeightedGraph {
         }
 	}
 	
+	/**
+	 * create a reverse graph
+	 * @return a new reverse graph
+	 */
+	@SuppressWarnings("unchecked")
+	public WeightedGraph reverse(){
+		WeightedGraph wg = new WeightedGraph(this.V,this.E);
+		wg.vList = this.vList; //replace point list with original point list
+		wg.adjLists = (Vector<DirectedEdge>[]) new Vector[this.V]; //ignore randomly created edges
+		for(int v=0; v<this.V; v++){
+			wg.adjLists[v] = new Vector<DirectedEdge>();
+		}
+		for(int v=0; v<this.V; v++){
+			Iterator<DirectedEdge> iterator = this.adjLists[v].iterator();
+			while(iterator.hasNext()){
+				wg.addEdge(iterator.next().reverse()); 
+			}
+		}
+		return wg;
+	}
+	
+	/**
+	 * add edge to the graph
+	 * @param e
+	 */
 	public void addEdge(DirectedEdge e){
 		this.adjLists[e.from().getNum()].add(e);
 	}
@@ -140,11 +165,12 @@ public class WeightedGraph {
 	/**
 	 * Draw points and lines to represent graph
 	 */
-	public void display(){
+	public Draw display(){
 		Draw draw = new Draw("Directed Graph");
 		draw.setPenRadius(0.01);
 		for(int v=0; v<this.V; v++){
 			draw.point(this.vList[v].getX(),this.vList[v].getY());
+			draw.text(this.vList[v].getX()+0.02,this.vList[v].getY()+0.02, Integer.toString(this.vList[v].getNum()));
 		}
 		draw.setPenRadius(0.002);
 		for(int v=0; v<this.V; v++){
@@ -156,6 +182,7 @@ public class WeightedGraph {
 				draw.line(p1.getX(), p1.getY(), p2.getX(), p2.getY());
 			}
 		}
+		return draw;
 	}
 	/**
 	 * @param args
@@ -163,7 +190,7 @@ public class WeightedGraph {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		WeightedGraph g = new WeightedGraph("graph.txt");
-		g.display();
+		g.reverse().display();
 
 	}
 

@@ -2,6 +2,7 @@
  *find shortest path using Dijkstra's algorithm 
  */
 
+import java.awt.Color;
 import java.util.Stack;
 import java.util.PriorityQueue;
 import java.util.Comparator;
@@ -88,7 +89,6 @@ public class Dijkstra {
 		if(from[pos] == V) return stack;
 		stack.push(pos);
 		while(pos != s){
-			StdOut.println(pos);
 			pos = from[pos];
 			stack.push(pos);
 		}
@@ -99,18 +99,20 @@ public class Dijkstra {
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		PriorityQueue<Integer> pq = new PriorityQueue<Integer>();
-		pq.add(9);
-		pq.add(2);
-		pq.add(4);
-		pq.add(7);
-		StdOut.print(pq.poll());
 		WeightedGraph g = new WeightedGraph("graph.txt");
 		//g.display();
 		Dijkstra d = new Dijkstra(g,0);
 		Stack<Integer> stack = d.path(6);
 		StdOut.print(stack);
-
+		Draw draw = g.display();
+		draw.setPenColor(Color.RED);
+		int p = stack.pop();
+		while(!stack.isEmpty()){
+			int q = stack.pop();
+			draw.line(g.getPoint(p).getX(), g.getPoint(p).getY(), 
+					  g.getPoint(q).getX(), g.getPoint(q).getY());
+			p = q;
+		}
 	}
 
 }

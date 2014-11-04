@@ -8,7 +8,7 @@
  */
 
 public class DirectedEdge { 
-    private final Point a;
+    private final Point a; // the direction is a->b
     private final Point b;
     private final double weight;
 
@@ -51,6 +51,15 @@ public class DirectedEdge {
      */
     public double weight() {
         return weight;
+    }
+    
+    /**
+     * reverse the direction of the DirectedEdge
+     * @return a reverse directed edge
+     */
+    public DirectedEdge reverse(){
+    	DirectedEdge e = new DirectedEdge(this.b,this.a,this.weight);
+    	return e;
     }
     
     /**
