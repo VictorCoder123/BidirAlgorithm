@@ -144,7 +144,7 @@ public class Dijkstra {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		//WeightedGraph g = new WeightedGraph("graph.txt");
-		WeightedGraph g = new WeightedGraph(25, 200);
+		WeightedGraph g = new WeightedGraph(125, 400);
 		Draw draw = g.display();
 		Dijkstra d = new Dijkstra(g,0,4);
 		d.compute();

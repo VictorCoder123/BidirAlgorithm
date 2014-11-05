@@ -104,7 +104,7 @@ public class BidirAlgorithm {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		//WeightedGraph g = new WeightedGraph("graph.txt");
-		WeightedGraph g = new WeightedGraph(25, 200);
+		WeightedGraph g = new WeightedGraph(125, 400);
 		Draw draw = g.display();
 		BidirAlgorithm bi = new BidirAlgorithm(g,0,4);
 		LinkedList<Integer> list = bi.path();
