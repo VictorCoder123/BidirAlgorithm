@@ -1,10 +1,8 @@
-/**
- *find shortest path using Dijkstra's algorithm 
- */
-
 import java.awt.Color;
-import java.util.Stack;
+import java.util.Vector;
+import java.util.Queue;
 import java.util.PriorityQueue;
+import java.util.LinkedList;
 import java.util.Comparator;
 import java.util.Iterator;
 /**
@@ -13,10 +11,15 @@ import java.util.Iterator;
  */
 public class Dijkstra {
 	private int s; //num of start point
+	private int t; //num of end point
+	private WeightedGraph g;
 	private double [] dist; // the current shortest distance from vertex to source
 	private int [] from;  // the previous vertex of certain vertex on the shortest path
 	private boolean [] visited; //true if the vertice is already visited
+	private Vector<Integer> treeSet; //store the expanded vertices, which don't need to be relaxed anymore
 	private PriorityQueue<Point> pq; //store the frontier of vertices
+	private int iterations;
+	private int smallest; //end point of the smallest edge or start point
 	
 	/**
 	 * Comparator for DirectedEdge, compare the distance from 
@@ -34,14 +37,25 @@ public class Dijkstra {
 		}
 	}
 	
-	Dijkstra(WeightedGraph g, int s){
+	/**
+	 * Constructor of Dijkstra's algorithm, set t larger than V
+	 * if need to all shortest path from s.
+	 * @param g
+	 * @param s
+	 * @param t
+	 */
+	Dijkstra(WeightedGraph g, int s, int t){
+		iterations = 0;
 		int V = g.vNum();
 		if(s<0||s>=V) throw new IllegalArgumentException("Exceed Bound!");
 		this.s = s;
-		int smallest = s; //end point of the smallest edge or start point
+		this.t = t;
+		this.g = g;
+		smallest = Integer.MAX_VALUE; //end point of the smallest edge or start point
 		visited = new boolean[V];
 		dist = new double[V];
 		from = new int[V];
+		treeSet = new Vector<Integer>();
 		
 		for(int v=0; v<V; v++){
 			visited[v] = false;
@@ -54,67 +68,111 @@ public class Dijkstra {
 		Comparator<Point> comparator = new EdgeComparator();
 		pq = new PriorityQueue<Point>(comparator);
 		pq.add(g.getPoint(s));
-		// continue until the frontier of vertices is empty
-		while(!pq.isEmpty()){
-			Iterator<DirectedEdge> iterator = g.adjEdges(smallest);
-			/*add all adjacent edges of smallest vertex to pq*/
-			while(iterator.hasNext()){
-				DirectedEdge e = iterator.next(); // update dist[] in every expansion
-				if(dist[e.from().getNum()]+e.weight() < dist[e.to().getNum()]){
-					dist[e.to().getNum()] = dist[e.from().getNum()]+e.weight();
-					from[e.to().getNum()] = e.from().getNum(); //keep track of previous vertex
-				}
-				/*update all dist but only add edges with unvisited end point */
-				if (!visited[e.to().getNum()]){
-					pq.add(e.to());
-					visited[e.to().getNum()] = true;
-				}
+	}
+	
+	public void expand(){
+		smallest = pq.poll().getNum(); //end point of the smallest edge
+		treeSet.add(smallest);
+		Iterator<DirectedEdge> iterator = g.adjEdges(smallest);
+		/*add all adjacent edges of smallest vertex to pq*/
+		while(iterator.hasNext()){
+			DirectedEdge e = iterator.next(); // update dist[] in every expansion
+			if(dist[e.from().getNum()]+e.weight() < dist[e.to().getNum()]){
+				dist[e.to().getNum()] = dist[e.from().getNum()]+e.weight();
+				from[e.to().getNum()] = e.from().getNum(); //keep track of previous vertex
+				iterations++;
 			}
-			smallest = pq.poll().getNum(); //end point of the smallest edge
+			/*update all dist but only add edges with unvisited end point */
+			if (!visited[e.to().getNum()]){
+				pq.add(e.to());
+				visited[e.to().getNum()] = true;
+			}
+		}	
+	}
+	
+	public void compute(){
+		// continue until the frontier of vertices is empty
+		while(!pq.isEmpty() && smallest!=t){ //stop when destination point is going to be expanded
+			expand();
 		}
 	}
 	
-	public boolean allVisited(){
-		for(int v=0; v<visited.length; v++){
-			if(visited[v] == false) return false;
-		}
-		return true;
-	}
-	
-	public Stack<Integer> path(int t){
+	/**
+	 * return the shortest path
+	 * @return a queue of shortest path
+	 */
+	public Queue<Integer> path(){
 		int V = visited.length;
-		if(t<0||t>=V) throw new IllegalArgumentException("Exceed Bound!");
-		Stack<Integer> stack = new Stack<Integer>();
+		Queue<Integer> queue = new LinkedList<Integer>();
 		int pos = t;
-		if(from[pos] == V) return stack;
-		stack.push(pos);
-		while(pos != s){
+		if(from[pos] == V) return queue;
+		queue.add(pos);
+		while(pos != this.s){
 			pos = from[pos];
-			stack.push(pos);
+			queue.add(pos);
 		}
-		return stack;
+		return queue;
 	}
+	
+	/**
+	 * # of iterations in algorithms
+	 * @return # of iterations in algorithms
+	 */
+	public int numIterations(){
+		return this.iterations;
+	}
+	
+	/**
+	 * return the points set
+	 * @return the tree Set 
+	 */
+	public Vector<Integer> getSet(){
+		return this.treeSet;
+	}
+	
+	/**
+	 * return the list which keep track of the path
+	 * @return int list.
+	 */
+	public int[] getFrom(){
+		return this.from;
+	}
+	
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		//WeightedGraph g = new WeightedGraph("graph.txt");
-		WeightedGraph g = new WeightedGraph(50, 600);
-		Dijkstra d = new Dijkstra(g,0);
-		Stack<Integer> stack = d.path(45);
-		StdOut.print(stack);
+		WeightedGraph g = new WeightedGraph(25, 200);
 		Draw draw = g.display();
+		Dijkstra d = new Dijkstra(g,0,4);
+		d.compute();
+		Queue<Integer> queue = d.path();
+		draw.setPenColor(Color.BLUE);
+		draw.setPenRadius(0.015);
+		Iterator<Integer> iterator = d.treeSet.iterator(); // draw expanded points
+		StdOut.println("size of expanded points: ");
+		StdOut.println(d.treeSet.size());
+		while(iterator.hasNext()){
+			Point p = g.getPoint(iterator.next());
+			draw.point(p.getX(), p.getY());
+		}
+		StdOut.print("Path: ");     // output and draw path on graph
+		StdOut.print(queue.toString());
+		draw.setPenRadius(0.005);
 		draw.setPenColor(Color.RED);
-		if (!stack.isEmpty()){  // output stack if path exists
-			int p = stack.pop();
-			while(!stack.isEmpty()){
-				int q = stack.pop();
+		if (!queue.isEmpty()){  // output queue if path exists
+			int p = queue.poll();
+			while(!queue.isEmpty()){
+				int q = queue.poll();
 				draw.line(g.getPoint(p).getX(), g.getPoint(p).getY(), 
 						  g.getPoint(q).getX(), g.getPoint(q).getY());
 				p = q;
 			}
 		}
+		StdOut.print("\nThe num of Iterations: ");
+		StdOut.println(d.numIterations());
 	}
 
 }
