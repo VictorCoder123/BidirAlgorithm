@@ -99,19 +99,21 @@ public class Dijkstra {
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		WeightedGraph g = new WeightedGraph("graph.txt");
-		//g.display();
+		//WeightedGraph g = new WeightedGraph("graph.txt");
+		WeightedGraph g = new WeightedGraph(50, 600);
 		Dijkstra d = new Dijkstra(g,0);
-		Stack<Integer> stack = d.path(6);
+		Stack<Integer> stack = d.path(45);
 		StdOut.print(stack);
 		Draw draw = g.display();
 		draw.setPenColor(Color.RED);
-		int p = stack.pop();
-		while(!stack.isEmpty()){
-			int q = stack.pop();
-			draw.line(g.getPoint(p).getX(), g.getPoint(p).getY(), 
-					  g.getPoint(q).getX(), g.getPoint(q).getY());
-			p = q;
+		if (!stack.isEmpty()){  // output stack if path exists
+			int p = stack.pop();
+			while(!stack.isEmpty()){
+				int q = stack.pop();
+				draw.line(g.getPoint(p).getX(), g.getPoint(p).getY(), 
+						  g.getPoint(q).getX(), g.getPoint(q).getY());
+				p = q;
+			}
 		}
 	}
 

@@ -14,7 +14,9 @@
  */
 
 import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.Vector;
+import java.util.Collections;
 import java.util.Locale;
 import java.util.Scanner;
 import java.io.File;
@@ -38,20 +40,29 @@ public class WeightedGraph {
 	 */
 	@SuppressWarnings("unchecked")
 	WeightedGraph(int V, int E){
-		if(V<0 || E<0) throw new IllegalArgumentException("Accept no negative number for vertices and edges");
+		if(V<0 || E<0 || E>V*(V-1)) throw new IllegalArgumentException("Exceed Bound!");
 		this.V = V;
 		this.E = E;
 		this.vList = new Point[V];
 		this.adjLists = (Vector<DirectedEdge>[]) new Vector[V];
 		for(int v=0; v<V; v++){
 			adjLists[v] = new Vector<DirectedEdge>();
+			vList[v] = new Point(v);
 		}
+		ArrayList<int[]> list = new ArrayList<int[]>();
+		for(int i=0; i<V; i++){
+			for(int j=0; j<V; j++){
+				int [] pair = new int[2];
+				pair[0] = i; pair[1] = j;
+				if( i!=j) list.add(pair);
+			}
+		}
+		Collections.shuffle(list);
+		//Iterator<int[]> iterator = vector.iterator();
 		for(int e=0; e<E; e++){
-			int num1 = (int) Math.random()*V;
-			int num2 = (int) Math.random()*V;
-			if(vList[num1] == null) vList[num1] = new Point(num1);
-			if(vList[num2] == null) vList[num2] = new Point(num2);
-			double weight = Math.random();
+			int num1 = list.remove(0)[0];
+			int num2 = list.remove(0)[1];
+			double weight = vList[num1].distance(vList[num2]);
 			DirectedEdge edge = new DirectedEdge(vList[num1],vList[num2],weight);
 			addEdge(edge);
 		}
@@ -77,6 +88,7 @@ public class WeightedGraph {
 				this.adjLists = (Vector<DirectedEdge>[]) new Vector[V];
 				for(int v=0; v<this.V; v++){
 					this.adjLists[v] = new Vector<DirectedEdge>();
+					this.vList[v] = new Point(v);
 				}
 				if(V<0 || E<0){
 					scanner.close();
@@ -90,8 +102,6 @@ public class WeightedGraph {
 						throw new IllegalArgumentException("# of vertices exceeds bound!");
 					}
 					weight = scanner.nextDouble();
-					if(vList[num1] == null) vList[num1] = new Point(num1);
-					if(vList[num2] == null) vList[num2] = new Point(num2);
 					DirectedEdge edge = new DirectedEdge(vList[num1],vList[num2],weight); //p->q
 					this.addEdge(edge);	
 				}
@@ -177,6 +187,7 @@ public class WeightedGraph {
 			Vector<DirectedEdge> vector = this.adjLists[v];
 			for(int i=0; i<vector.size(); i++){
 				DirectedEdge e = (DirectedEdge) vector.elementAt(i);
+				//StdOut.println(e.toString());
 				Point p1 = e.from();
 				Point p2 = e.to();
 				draw.line(p1.getX(), p1.getY(), p2.getX(), p2.getY());
