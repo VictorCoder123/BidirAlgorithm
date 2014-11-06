@@ -10,7 +10,7 @@
 public class DirectedEdge { 
     private final Point a; // the direction is a->b
     private final Point b;
-    private final double weight;
+    private double weight;
 
     /**
      * Initializes a directed edge from vertex <tt>v</tt> to vertex <tt>w</tt> with
@@ -51,6 +51,10 @@ public class DirectedEdge {
      */
     public double weight() {
         return weight;
+    }
+    
+    public void setWeight(double weight){
+    	this.weight = weight;
     }
     
     /**

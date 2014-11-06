@@ -4,6 +4,12 @@
  * 
  * graph.txt
  * 4 6
+ * 
+ * 0.12 0.12 
+ * 0.12 0.15
+ * 0.12 0.14
+ * 0.12 0.13
+ * 
  * 0-2 0.5 
  * 0-3 0.6
  * 1-2 0.4 
@@ -14,9 +20,7 @@
  */
 
 import java.util.Iterator;
-import java.util.ArrayList;
 import java.util.Vector;
-import java.util.Collections;
 import java.util.Locale;
 import java.util.Scanner;
 import java.io.File;
@@ -39,32 +43,15 @@ public class WeightedGraph {
 	 * @param E
 	 */
 	@SuppressWarnings("unchecked")
-	WeightedGraph(int V, int E){
-		if(V<0 || E<0 || E>V*(V-1)) throw new IllegalArgumentException("Exceed Bound!");
+	WeightedGraph(int V){
+		if(V<0) throw new IllegalArgumentException("Exceed Bound!");
 		this.V = V;
-		this.E = E;
+		this.E = 0;
 		this.vList = new Point[V];
 		this.adjLists = (Vector<DirectedEdge>[]) new Vector[V];
 		for(int v=0; v<V; v++){
 			adjLists[v] = new Vector<DirectedEdge>();
 			vList[v] = new Point(v);
-		}
-		ArrayList<int[]> list = new ArrayList<int[]>();
-		for(int i=0; i<V; i++){
-			for(int j=0; j<V; j++){
-				int [] pair = new int[2];
-				pair[0] = i; pair[1] = j;
-				if( i!=j) list.add(pair);
-			}
-		}
-		Collections.shuffle(list);
-		//Iterator<int[]> iterator = vector.iterator();
-		for(int e=0; e<E; e++){
-			int num1 = list.remove(0)[0];
-			int num2 = list.remove(0)[1];
-			double weight = vList[num1].distance(vList[num2]);
-			DirectedEdge edge = new DirectedEdge(vList[num1],vList[num2],weight);
-			addEdge(edge);
 		}
 	}
 	
@@ -88,7 +75,9 @@ public class WeightedGraph {
 				this.adjLists = (Vector<DirectedEdge>[]) new Vector[V];
 				for(int v=0; v<this.V; v++){
 					this.adjLists[v] = new Vector<DirectedEdge>();
-					this.vList[v] = new Point(v);
+					double x = scanner.nextDouble();
+					double y = scanner.nextDouble();
+					this.vList[v] = new Point(x,y,v);
 				}
 				if(V<0 || E<0){
 					scanner.close();
@@ -119,7 +108,7 @@ public class WeightedGraph {
 	 */
 	@SuppressWarnings("unchecked")
 	public WeightedGraph reverse(){
-		WeightedGraph wg = new WeightedGraph(this.V,this.E);
+		WeightedGraph wg = new WeightedGraph(this.V);
 		wg.vList = this.vList; //replace point list with original point list
 		wg.adjLists = (Vector<DirectedEdge>[]) new Vector[this.V]; //ignore randomly created edges
 		for(int v=0; v<this.V; v++){
@@ -168,10 +157,27 @@ public class WeightedGraph {
     	return this.adjLists[v].iterator();
     }
 	
+	/**
+	 * Given a integer, return the corresponding Point
+	 * @param v
+	 * @return Point object
+	 */
 	public Point getPoint(int v){
 		if(v<0||v>=this.V)throw new IllegalArgumentException("Exceed Bound!");
 		return vList[v];
 	}
+	
+	public void resetWeight(){
+		for(int v=0; v<this.V; v++){
+			for(int i=0; i<this.adjLists[v].size(); i++){
+				DirectedEdge edge = this.adjLists[v].elementAt(i);
+				Double weight = edge.from().distance(edge.to())*(Math.random()*0.5+1);
+				DirectedEdge newEdge = new DirectedEdge(edge.from(),edge.to(),weight);
+				this.adjLists[v].set(i, newEdge);
+			}
+		}
+	}
+	
 	/**
 	 * Draw points and lines to represent graph
 	 */
@@ -200,7 +206,7 @@ public class WeightedGraph {
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		WeightedGraph g = new WeightedGraph("graph.txt");
+		WeightedGraph g = new WeightedGraph("RandomGraph.txt");
 		g.reverse().display();
 
 	}

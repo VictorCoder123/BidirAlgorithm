@@ -111,14 +111,36 @@ public class BidirAlgorithm {
 	}
 	
 	/**
+	 * return intersection
+	 * @return intersection
+	 */
+	public int getIntersection(){
+		return this.intersection;
+	}
+	
+	/**
+	 * @return set1 
+	 */
+	public Vector<Integer> getSet1(){
+		return this.set1;
+	}
+	
+	/**
+	 * @return set2
+	 */
+	public Vector<Integer> getSet2(){
+		return this.set2;
+	}
+	
+	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		//WeightedGraph g = new WeightedGraph("graph.txt");
-		WeightedGraph g = new WeightedGraph(125, 400);
+		WeightedGraph g = new WeightedGraph("RandomGraph.txt");
+		//WeightedGraph g = new WeightedGraph(125, 400);
 		Draw draw = g.display();
-		BidirAlgorithm bi = new BidirAlgorithm(g,0,4);
+		BidirAlgorithm bi = new BidirAlgorithm(g,1,5);
 		LinkedList<Integer> list = bi.path();
 		
 		draw.setPenColor(Color.BLUE);  

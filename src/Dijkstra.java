@@ -1,8 +1,7 @@
 import java.awt.Color;
 import java.util.Vector;
-import java.util.Queue;
+import java.util.Stack;
 import java.util.PriorityQueue;
-import java.util.LinkedList;
 import java.util.Comparator;
 import java.util.Iterator;
 /**
@@ -103,17 +102,22 @@ public class Dijkstra {
 	 * return the shortest path
 	 * @return a queue of shortest path
 	 */
-	public Queue<Integer> path(){
+	public Stack<Integer> path(){
 		int V = visited.length;
-		Queue<Integer> queue = new LinkedList<Integer>();
+		Stack<Integer> stack = new Stack<Integer>();
+		Stack<Integer> stack1 = new Stack<Integer>();
 		int pos = t;
-		if(from[pos] == V) return queue;
-		queue.add(pos);
+		if(from[pos] == V) return stack; // no path found
+		stack.push(pos);
 		while(pos != this.s){
 			pos = from[pos];
-			queue.add(pos);
+			stack.push(pos);
 		}
-		return queue;
+		StdOut.println(stack.size());
+		while(!stack.isEmpty()){
+			stack1.push(stack.pop());
+		}
+		return stack1;
 	}
 	
 	/**
@@ -153,12 +157,12 @@ public class Dijkstra {
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		//WeightedGraph g = new WeightedGraph("graph.txt");
-		WeightedGraph g = new WeightedGraph(125, 400);
+		WeightedGraph g = new WeightedGraph("RandomGraph.txt");
+		//WeightedGraph g = new WeightedGraph(125, 400);
 		Draw draw = g.display();
-		Dijkstra d = new Dijkstra(g,0,4);
+		Dijkstra d = new Dijkstra(g,1,5);
 		d.compute();
-		Queue<Integer> queue = d.path();
+		Stack<Integer> list = d.path();
 		draw.setPenColor(Color.BLUE);
 		draw.setPenRadius(0.015);
 		Iterator<Integer> iterator = d.treeSet.iterator(); // draw expanded points
@@ -169,13 +173,13 @@ public class Dijkstra {
 			draw.point(p.getX(), p.getY());
 		}
 		StdOut.print("Path: ");     // output and draw path on graph
-		StdOut.print(queue.toString());
+		StdOut.print(list.toString());
 		draw.setPenRadius(0.005);
 		draw.setPenColor(Color.RED);
-		if (!queue.isEmpty()){  // output queue if path exists
-			int p = queue.poll();
-			while(!queue.isEmpty()){
-				int q = queue.poll();
+		if (!list.isEmpty()){  // output queue if path exists
+			int p = list.pop();
+			while(!list.isEmpty()){
+				int q = list.pop();
 				draw.line(g.getPoint(p).getX(), g.getPoint(p).getY(), 
 						  g.getPoint(q).getX(), g.getPoint(q).getY());
 				p = q;
