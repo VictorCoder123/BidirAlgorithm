@@ -17,7 +17,7 @@ public class Dijkstra {
 	private int [] from;  // the previous vertex of certain vertex on the shortest path
 	private boolean [] visited; //true if the vertice is already visited
 	private Vector<Integer> treeSet; //store the expanded vertices, which don't need to be relaxed anymore
-	private PriorityQueue<Point> pq; //store the frontier of vertices
+	private PriorityQueue<Integer> pq; //store the frontier of vertices
 	private int iterations;
 	private int smallest; //end point of the smallest edge or start point
 	
@@ -26,10 +26,8 @@ public class Dijkstra {
 	 * source to end point of the edge
 	 * @author Qishen Zhang
 	 */
-	public class EdgeComparator implements Comparator<Point>{
-		public int compare(Point a, Point b){
-			int num1 = a.getNum();
-			int num2 = b.getNum();
+	public class EdgeComparator implements Comparator<Integer>{
+		public int compare(Integer num1, Integer num2){
 			/*compare the dist[] of end point of two edges*/
 			if(dist[num1] > dist[num2]) return 1;
 			else if(dist[num1] < dist[num2]) return -1;
@@ -65,13 +63,13 @@ public class Dijkstra {
 		dist[s] = 0.0;
 		visited[s] = true;
 		from[s] = s;
-		Comparator<Point> comparator = new EdgeComparator();
-		pq = new PriorityQueue<Point>(comparator);
-		pq.add(g.getPoint(s));
+		Comparator<Integer> comparator = new EdgeComparator();
+		pq = new PriorityQueue<Integer>(comparator);
+		pq.add(s);
 	}
 	
 	public void expand(){
-		smallest = pq.poll().getNum(); //end point of the smallest edge
+		smallest = pq.poll(); //end point of the smallest edge
 		treeSet.add(smallest);
 		Iterator<DirectedEdge> iterator = g.adjEdges(smallest);
 		/*add all adjacent edges of smallest vertex to pq*/
@@ -84,12 +82,16 @@ public class Dijkstra {
 			}
 			/*update all dist but only add edges with unvisited end point */
 			if (!visited[e.to().getNum()]){
-				pq.add(e.to());
+				pq.add(e.to().getNum());
 				visited[e.to().getNum()] = true;
 			}
 		}	
 	}
 	
+	/**
+	 * compute with the Dijkstra algorithm until reach t or cannot 
+	 * reach the rest of vertices.
+	 */
 	public void compute(){
 		// continue until the frontier of vertices is empty
 		while(!pq.isEmpty() && smallest!=t){ //stop when destination point is going to be expanded
@@ -120,6 +122,14 @@ public class Dijkstra {
 	 */
 	public int numIterations(){
 		return this.iterations;
+	}
+	
+	/**
+	 * return the pq that contains frontier
+	 * @return priority queue of frontier points
+	 */
+	public PriorityQueue<Integer> getPQ(){
+		return this.pq;
 	}
 	
 	/**
