@@ -83,6 +83,6 @@ public class DirectedEdge {
     	Point p1 = new Point(0.5,0.5,1);
     	Point p2 = new Point(0.4,0.3,2);
         DirectedEdge e = new DirectedEdge(p1,p2, 3.14);
-        StdOut.println(e);
+        System.out.println(e);
     }
 }

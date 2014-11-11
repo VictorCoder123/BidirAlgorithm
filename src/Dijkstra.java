@@ -1,4 +1,4 @@
-import java.awt.Color;
+
 import java.util.Vector;
 import java.util.Stack;
 import java.util.PriorityQueue;
@@ -113,7 +113,6 @@ public class Dijkstra {
 			pos = from[pos];
 			stack.push(pos);
 		}
-		StdOut.println(stack.size());
 		while(!stack.isEmpty()){
 			stack1.push(stack.pop());
 		}
@@ -152,41 +151,4 @@ public class Dijkstra {
 		return this.from;
 	}
 	
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		WeightedGraph g = new WeightedGraph("RandomGraph.txt");
-		//WeightedGraph g = new WeightedGraph(125, 400);
-		Draw draw = g.display();
-		Dijkstra d = new Dijkstra(g,1,5);
-		d.compute();
-		Stack<Integer> list = d.path();
-		draw.setPenColor(Color.BLUE);
-		draw.setPenRadius(0.015);
-		Iterator<Integer> iterator = d.treeSet.iterator(); // draw expanded points
-		StdOut.println("size of expanded points: ");
-		StdOut.println(d.treeSet.size());
-		while(iterator.hasNext()){
-			Point p = g.getPoint(iterator.next());
-			draw.point(p.getX(), p.getY());
-		}
-		StdOut.print("Path: ");     // output and draw path on graph
-		StdOut.print(list.toString());
-		draw.setPenRadius(0.005);
-		draw.setPenColor(Color.RED);
-		if (!list.isEmpty()){  // output queue if path exists
-			int p = list.pop();
-			while(!list.isEmpty()){
-				int q = list.pop();
-				draw.line(g.getPoint(p).getX(), g.getPoint(p).getY(), 
-						  g.getPoint(q).getX(), g.getPoint(q).getY());
-				p = q;
-			}
-		}
-		StdOut.print("\nThe num of Iterations: ");
-		StdOut.println(d.numIterations());
-	}
-
 }

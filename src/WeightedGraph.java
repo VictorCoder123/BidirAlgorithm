@@ -193,7 +193,6 @@ public class WeightedGraph {
 			Vector<DirectedEdge> vector = this.adjLists[v];
 			for(int i=0; i<vector.size(); i++){
 				DirectedEdge e = (DirectedEdge) vector.elementAt(i);
-				//StdOut.println(e.toString());
 				Point p1 = e.from();
 				Point p2 = e.to();
 				draw.line(p1.getX(), p1.getY(), p2.getX(), p2.getY());

@@ -2,7 +2,6 @@
  * find shortest path using Bi-Dijkstra algorithm
  */
 
-import java.awt.Color;
 import java.util.Vector;
 import java.util.Queue;
 import java.util.Stack;
@@ -130,61 +129,6 @@ public class BidirAlgorithm {
 	 */
 	public Vector<Integer> getSet2(){
 		return this.set2;
-	}
-	
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		WeightedGraph g = new WeightedGraph("RandomGraph.txt");
-		//WeightedGraph g = new WeightedGraph(125, 400);
-		Draw draw = g.display();
-		BidirAlgorithm bi = new BidirAlgorithm(g,1,5);
-		LinkedList<Integer> list = bi.path();
-		
-		draw.setPenColor(Color.BLUE);  
-		draw.setPenRadius(0.015);
-		Iterator<Integer> iterator1 = bi.set1.iterator(); // draw expanded points from s
-		while(iterator1.hasNext()){
-			Point p = g.getPoint(iterator1.next());
-			draw.point(p.getX(), p.getY());
-		}
-		
-		draw.setPenColor(Color.GREEN);
-		draw.setPenRadius(0.015);
-		Iterator<Integer> iterator2 = bi.set2.iterator(); // draw expanded points from t
-		StdOut.println("size of total expanded points: ");
-		StdOut.println(bi.set1.size()+bi.set2.size());
-		while(iterator2.hasNext()){
-			Point p = g.getPoint(iterator2.next());
-			draw.point(p.getX(), p.getY());
-		}
-		if(bi.intersection!=-1){
-			draw.setPenColor(Color.YELLOW); //hightlight intersection point
-			draw.setPenRadius(0.025);
-			Point p = g.getPoint(bi.intersection);
-			draw.point(p.getX(), p.getY());
-			StdOut.println("Intersection point: ");
-			StdOut.println(bi.intersection);
-		}
-		
-		StdOut.print("Path: ");     // output and draw path on graph
-		StdOut.print(list.toString());
-		draw.setPenRadius(0.005);
-		draw.setPenColor(Color.RED);
-		if (!list.isEmpty()){  // output queue if path exists
-			int p = list.removeFirst();
-			while(!list.isEmpty()){
-				int q = list.removeFirst();
-				draw.line(g.getPoint(p).getX(), g.getPoint(p).getY(), 
-						  g.getPoint(q).getX(), g.getPoint(q).getY());
-				p = q;
-			}
-		}
-		StdOut.print("\nThe num of Iterations: ");
-		StdOut.println(bi.numIterations());
-
 	}
 
 }
